@@ -5,6 +5,8 @@
 
 use std::ops;
 
+use serde::{Deserialize, Serialize};
+
 pub mod raw;
 #[cfg(test)]
 mod tests;
@@ -12,7 +14,7 @@ mod tests;
 /// A phonetic hash.
 ///
 /// Using the `Sub` implementation of the hashes will give you the difference.
-#[derive(Copy, Clone, Hash, PartialEq, Eq, PartialOrd, Ord, Debug)]
+#[derive(Copy, Clone, Hash, PartialEq, Eq, PartialOrd, Ord, Debug, Serialize, Deserialize)]
 pub struct Hash {
     hash: u128,
 }
