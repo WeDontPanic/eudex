@@ -1,5 +1,4 @@
 use super::*;
-use test::Bencher;
 
 #[test]
 fn test_exact() {
@@ -32,25 +31,51 @@ fn test_mismatch() {
 
 #[test]
 fn test_distance() {
-    assert!((Hash::new("lizzard") - Hash::new("wizzard")).dist() > (Hash::new("rick") - Hash::new("rolled")).dist());
-    assert!((Hash::new("bannana") - Hash::new("panana")).dist() >= (Hash::new("apple") - Hash::new("abple")).dist());
+    assert!(
+        (Hash::new("lizzard") - Hash::new("wizzard")).dist()
+            > (Hash::new("rick") - Hash::new("rolled")).dist()
+    );
+    assert!(
+        (Hash::new("bannana") - Hash::new("panana")).dist()
+            >= (Hash::new("apple") - Hash::new("abple")).dist()
+    );
     //assert!((Hash::new("franco") - Hash::new("sranco")).dist() < (Hash::new("unicode") - Hash::new("ASCII")).dist());
-    assert!((Hash::new("trump") - Hash::new("drumpf")).dist() < (Hash::new("gangam") - Hash::new("style")).dist());
+    assert!(
+        (Hash::new("trump") - Hash::new("drumpf")).dist()
+            < (Hash::new("gangam") - Hash::new("style")).dist()
+    );
 }
 
 #[test]
 fn test_reflexivity() {
-    assert_eq!((Hash::new("a") - Hash::new("b")).dist(), (Hash::new("b") - Hash::new("a")).dist());
-    assert_eq!((Hash::new("youtube") - Hash::new("facebook")).dist(), (Hash::new("facebook") - Hash::new("youtube")).dist());
-    assert_eq!((Hash::new("Rust") - Hash::new("Go")).dist(), (Hash::new("Go") - Hash::new("Rust")).dist());
-    assert_eq!((Hash::new("rick") - Hash::new("rolled")).dist(), (Hash::new("rolled") - Hash::new("rick")).dist());
+    assert_eq!(
+        (Hash::new("a") - Hash::new("b")).dist(),
+        (Hash::new("b") - Hash::new("a")).dist()
+    );
+    assert_eq!(
+        (Hash::new("youtube") - Hash::new("facebook")).dist(),
+        (Hash::new("facebook") - Hash::new("youtube")).dist()
+    );
+    assert_eq!(
+        (Hash::new("Rust") - Hash::new("Go")).dist(),
+        (Hash::new("Go") - Hash::new("Rust")).dist()
+    );
+    assert_eq!(
+        (Hash::new("rick") - Hash::new("rolled")).dist(),
+        (Hash::new("rolled") - Hash::new("rick")).dist()
+    );
 }
 
 #[test]
 fn test_similar() {
     // Similar.
     assert!((Hash::new("yay") - Hash::new("yuy")).similar());
-    assert!((Hash::new("crack") - Hash::new("crakk")).dist().count_ones() < 10);
+    assert!(
+        (Hash::new("crack") - Hash::new("crakk"))
+            .dist()
+            .count_ones()
+            < 10
+    );
     assert!((Hash::new("what") - Hash::new("wat")).similar());
     assert!((Hash::new("jesus") - Hash::new("jeuses")).similar());
     assert!((Hash::new("") - Hash::new("")).similar());
@@ -62,7 +87,12 @@ fn test_similar() {
     assert!((Hash::new("möier") - Hash::new("meyer")).similar());
     assert!((Hash::new("fümlaut") - Hash::new("fymlaut")).similar());
     //assert!((Hash::new("ümlaut") - Hash::new("ymlaut")).similar());
-    assert!((Hash::new("schmid") - Hash::new("schmidt")).dist().count_ones() < 14);
+    assert!(
+        (Hash::new("schmid") - Hash::new("schmidt"))
+            .dist()
+            .count_ones()
+            < 14
+    );
 
     // Not similar.
     assert!(!(Hash::new("youtube") - Hash::new("reddit")).similar());
@@ -73,23 +103,4 @@ fn test_similar() {
     assert!(!(Hash::new("no") - Hash::new("go")).similar());
     assert!(!(Hash::new("horse") - Hash::new("norse")).similar());
     assert!(!(Hash::new("nice") - Hash::new("mice")).similar());
-}
-
-#[bench]
-fn bench_dict(b: &mut Bencher) {
-    use std::fs;
-    use std::io::{BufRead, BufReader};
-
-    b.iter(|| {
-        let dict = fs::File::open("/usr/share/dict/american-english").unwrap_or_else(|_| {
-            fs::File::open("/usr/share/dict/words").unwrap()
-        });
-        let mut vec = Vec::new();
-
-        for i in BufReader::new(dict).lines() {
-            vec.push(Hash::new(&i.unwrap()));
-        }
-
-        vec
-    });
 }
